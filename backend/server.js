@@ -6,12 +6,23 @@ const mongoose = require('mongoose')
 
 const app = express()
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://chat-app-sooty-tau-89.vercel.app'
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}
+  credentials: true,
+};
 
 app.use(cors(corsOptions))
 app.use(express.json())
